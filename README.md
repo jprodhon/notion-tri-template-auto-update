@@ -1,5 +1,7 @@
 # Auto-sync Notion training template
 
+Download this repository.
+
 First you need to create a new integration on your Notion account for Python
 [Notion integration](https://www.notion.so/my-integrations)
 
