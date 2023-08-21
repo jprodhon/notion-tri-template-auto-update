@@ -35,12 +35,12 @@ def get_date(date):
     week = datetime.date(year, month, day).isocalendar().week
     return week, year
 
-def date_limits(db1):
+def date_limits(calendar_db):
     first_week = 100
     first_year = 3000
     last_week = 0
     last_year = 1000
-    for workout in db1["results"]:
+    for workout in calendar_db["results"]:
         date = workout["properties"]["Date"]["date"]["start"]
         week, year = get_date(date)
         if year < first_year or (year == first_year and week < first_week):
@@ -52,10 +52,10 @@ def date_limits(db1):
     return first_year, first_week, last_year, last_week
 
 
-def update_db2(notion, db2, db2_id, nb_max, sport_list):
+def update_week_db(notion, week_db, week_db_id, nb_max, sport_list):
     for sport in sport_list:
         week_list = []
-        for week in db2["results"]:
+        for week in week_db["results"]:
             wk = int(week["properties"]["Week"]["title"][0]["plain_text"])
             wk_sport = week["properties"]["Sport"]["select"]["name"]
             if wk_sport == sport:
@@ -68,20 +68,20 @@ def update_db2(notion, db2, db2_id, nb_max, sport_list):
                 new_page = { 'Week': {'title': [{'text': {'content': str(wk)}}]}, 
                              'Sport': sport_json(sport),
                            }
-                notion.pages.create(parent={"database_id": db2_id}, properties=new_page)
+                notion.pages.create(parent={"database_id": week_db_id}, properties=new_page)
 
-def get_db2(db2, sport_list):
+def get_week_db(week_db, sport_list):
     week_l = {}
     for sport in sport_list:
         week_l[sport] = {}
-    for week in db2["results"]:
+    for week in week_db["results"]:
         wk = int(week["properties"]["Week"]["title"][0]["plain_text"])
         sport = week["properties"]["Sport"]["select"]["name"]
         week_l[sport][wk] = week["id"]
     return week_l
 
-def update_db1(notion, db1, week_list, sport_list, first_year, first_week):
-    for workout in db1["results"]:
+def update_calendar_db(notion, calendar_db, week_list, sport_list, first_year, first_week):
+    for workout in calendar_db["results"]:
         sport = workout["properties"]["Sport"]["select"]["name"]
         if workout["properties"]["Sport"]["select"]["name"] == sport:
             date = workout["properties"]["Date"]["date"]["start"]
